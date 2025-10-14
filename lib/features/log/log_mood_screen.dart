@@ -2,6 +2,7 @@ import 'package:dailypulse/data/models/mood_entry.dart';
 import 'package:flutter/material.dart';
 import '../../data/repo/mood_repository.dart';
 import '../../core/constants.dart';
+import '../../core/routes/fade_page_route.dart';
 
 
 class LogMoodScreen extends StatefulWidget {
@@ -56,9 +57,8 @@ class _LogMoodScreenState extends State<LogMoodScreen> {
   void _onMoodSelected(MoodOption mood) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) =>
-            AddNoteScreen(mood: mood, repository: _repository),
+      FadePageRoute(
+        page: AddNoteScreen(mood: mood, repository: _repository),
       ),
     );
   }

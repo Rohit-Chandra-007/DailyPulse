@@ -14,7 +14,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
- 
   @override
   Widget build(BuildContext context) {
     final repository = MoodRepository();
@@ -23,7 +22,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
           child: SizedBox(
             width: double.infinity,
             child: Text(
@@ -67,7 +66,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 }
-
 
 class _MoodCard extends StatelessWidget {
   final MoodEntry entry;

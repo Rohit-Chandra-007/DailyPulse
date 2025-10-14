@@ -14,10 +14,40 @@ class AppScaffold extends StatefulWidget {
   State<AppScaffold> createState() => _AppScaffoldState();
 }
 
-class _AppScaffoldState extends State<AppScaffold> {
+class _AppScaffoldState extends State<AppScaffold>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   final _screens = const [LogMoodScreen(), HistoryScreen(), InsightsScreen()];
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onTabChanged(int index) {
+    if (index != _currentIndex) {
+      _animationController.reset();
+      setState(() => _currentIndex = index);
+      _animationController.forward();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +70,10 @@ class _AppScaffoldState extends State<AppScaffold> {
       child: SafeArea(
         bottom: false,
         child: Scaffold(
-          body: _screens[_currentIndex],
+          body: FadeTransition(
+            opacity: _fadeAnimation,
+            child: _screens[_currentIndex],
+          ),
           floatingActionButton: FloatingActionButton(
             onPressed: widget.onThemeToggle,
             tooltip: isDark ? 'Light mode' : 'Dark mode',
@@ -81,7 +114,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                   selectedIcon: CupertinoIcons.smiley_fill,
                   label: 'Log',
                   isSelected: _currentIndex == 0,
-                  onTap: () => setState(() => _currentIndex = 0),
+                  onTap: () => _onTabChanged(0),
                   isDark: isDark,
                 ),
                 NavBarItem(
@@ -89,7 +122,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                   selectedIcon: CupertinoIcons.clock_fill,
                   label: 'History',
                   isSelected: _currentIndex == 1,
-                  onTap: () => setState(() => _currentIndex = 1),
+                  onTap: () => _onTabChanged(1),
                   isDark: isDark,
                 ),
                 NavBarItem(
@@ -97,7 +130,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                   selectedIcon: CupertinoIcons.chart_bar_fill,
                   label: 'Insights',
                   isSelected: _currentIndex == 2,
-                  onTap: () => setState(() => _currentIndex = 2),
+                  onTap: () => _onTabChanged(2),
                   isDark: isDark,
                 ),
               ],
