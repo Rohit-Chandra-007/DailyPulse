@@ -24,51 +24,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: _TabButton(
-                  label: 'Ongoing',
-                  isSelected: _showOngoing,
-                  onTap: () => setState(() => _showOngoing = true),
-                ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+          child: SizedBox(
+            width: double.infinity,
+            child: Text(
+              'All Moods',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _TabButton(
-                  label: 'Heart Tracker',
-                  isSelected: !_showOngoing,
-                  onTap: () => setState(() => _showOngoing = false),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'All Moods',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-              TextButton.icon(
-                onPressed: () {},
-                icon: const Text('Most recent'),
-                label: const Icon(Icons.arrow_upward, size: 16),
-                style: TextButton.styleFrom(
-                  foregroundColor: isDark
-                      ? Colors.grey.shade400
-                      : Colors.grey.shade600,
-                ),
-              ),
-            ],
+              textAlign: TextAlign.left,
+            ),
           ),
         ),
         Expanded(
