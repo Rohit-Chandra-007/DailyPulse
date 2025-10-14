@@ -27,13 +27,14 @@ class _AppScaffoldState extends State<AppScaffold> {
           end: Alignment.bottomCenter,
           colors: isDark
               ? [const Color(0xFF1E1E1E), const Color(0xFF121212)]
-              : [Colors.blue.shade200, Colors.blue.shade100],
+              : [Colors.blue.shade200,Colors.blue.shade100 ,Colors.blue.shade50],
         ),
       ),
 
       child: SafeArea(
         bottom: false,
         child: Scaffold(
+          backgroundColor: Colors.transparent,
           body: _screens[_currentIndex],
           floatingActionButton: FloatingActionButton(
             onPressed: widget.onThemeToggle,

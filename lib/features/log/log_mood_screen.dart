@@ -259,6 +259,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     return Scaffold(
       backgroundColor: widget.mood.color,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // Custom App Bar
