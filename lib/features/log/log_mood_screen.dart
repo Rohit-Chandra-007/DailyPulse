@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/mood_entry.dart';
 import '../../data/repo/mood_repository.dart';
-import '../widgets/emoji_grid.dart';
 
 class LogMoodScreen extends StatefulWidget {
   const LogMoodScreen({super.key});
@@ -12,8 +11,125 @@ class LogMoodScreen extends StatefulWidget {
 
 class _LogMoodScreenState extends State<LogMoodScreen> {
   final _repository = MoodRepository();
+
+  final List<MoodOption> _moods = [
+    MoodOption(label: 'Terrible', emoji: '😢', color: const Color(0xFFFF6B6B), level: 0),
+    MoodOption(label: 'Bad', emoji: '😕', color: const Color(0xFFFFB366), level: 1),
+    MoodOption(label: 'Okay', emoji: '😐', color: const Color(0xFFFFE66D), level: 2),
+    MoodOption(label: 'Good', emoji: '🙂', color: const Color(0xFF95E1D3), level: 3),
+    MoodOption(label: 'Great', emoji: '😄', color: const Color(0xFF6BCF7F), level: 4),
+  ];
+
+  void _onMoodSelected(MoodOption mood) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddNoteScreen(mood: mood, repository: _repository),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.blue.shade50,
+            Colors.white,
+          ],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'How are you feeling?',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1,
+                ),
+                itemCount: _moods.length,
+                itemBuilder: (context, index) {
+                  final mood = _moods[index];
+                  return GestureDetector(
+                    onTap: () => _onMoodSelected(mood),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: mood.color,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: mood.color.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(mood.emoji, style: const TextStyle(fontSize: 56)),
+                          const SizedBox(height: 8),
+                          Text(
+                            mood.label,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MoodOption {
+  final String label;
+  final String emoji;
+  final Color color;
+  final int level;
+
+  MoodOption({
+    required this.label,
+    required this.emoji,
+    required this.color,
+    required this.level,
+  });
+}
+
+class AddNoteScreen extends StatefulWidget {
+  final MoodOption mood;
+  final MoodRepository repository;
+
+  const AddNoteScreen({super.key, required this.mood, required this.repository});
+
+  @override
+  State<AddNoteScreen> createState() => _AddNoteScreenState();
+}
+
+class _AddNoteScreenState extends State<AddNoteScreen> {
   final _noteController = TextEditingController();
-  int? _selectedMood;
 
   @override
   void dispose() {
@@ -22,50 +138,100 @@ class _LogMoodScreenState extends State<LogMoodScreen> {
   }
 
   Future<void> _saveMood() async {
-    if (_selectedMood == null) return;
-
     final entry = MoodEntry(
       timestamp: DateTime.now(),
-      moodLevel: _selectedMood!,
+      moodLevel: widget.mood.level,
       note: _noteController.text.isEmpty ? null : _noteController.text,
     );
 
-    await _repository.addMoodEntry(entry);
+    await widget.repository.addMoodEntry(entry);
     if (mounted) {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Mood logged!')),
       );
-      _noteController.clear();
-      setState(() => _selectedMood = null);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Scaffold(
+      backgroundColor: widget.mood.color,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          widget.mood.label,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
         children: [
-          const Text('How are you feeling?', style: TextStyle(fontSize: 24)),
-          const SizedBox(height: 24),
-          EmojiGrid(
-            selectedMood: _selectedMood,
-            onMoodSelected: (mood) => setState(() => _selectedMood = mood),
-          ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _noteController,
-            decoration: const InputDecoration(
-              labelText: 'Add a note (optional)',
-              border: OutlineInputBorder(),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(widget.mood.emoji, style: const TextStyle(fontSize: 100)),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Feeling ${widget.mood.label.toLowerCase()}',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            maxLines: 3,
           ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _selectedMood == null ? null : _saveMood,
-            child: const Text('Save'),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _noteController,
+                    decoration: const InputDecoration(
+                      hintText: 'Add a note about how you feel...',
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.all(16),
+                    ),
+                    maxLines: 4,
+                    autofocus: true,
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: _saveMood,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: widget.mood.color,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Save Mood',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
