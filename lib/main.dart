@@ -9,8 +9,23 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +33,8 @@ class MyApp extends StatelessWidget {
       title: 'DailyPulse',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: const AppScaffold(),
+      themeMode: _themeMode,
+      home: AppScaffold(onThemeToggle: _toggleTheme),
     );
   }
 }

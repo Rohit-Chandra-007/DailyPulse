@@ -19,90 +19,85 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final repository = MoodRepository();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      // decoration: BoxDecoration(
-      //   gradient: LinearGradient(
-      //     begin: Alignment.topCenter,
-      //     end: Alignment.bottomCenter,
-      //     colors: [
-      //       Colors.blue.shade50,
-      //       Colors.white,
-      //     ],
-      //   ),
-      // ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _TabButton(
-                    label: 'Ongoing',
-                    isSelected: _showOngoing,
-                    onTap: () => setState(() => _showOngoing = true),
-                  ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: _TabButton(
+                  label: 'Ongoing',
+                  isSelected: _showOngoing,
+                  onTap: () => setState(() => _showOngoing = true),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _TabButton(
-                    label: 'Heart Tracker',
-                    isSelected: !_showOngoing,
-                    onTap: () => setState(() => _showOngoing = false),
-                  ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _TabButton(
+                  label: 'Heart Tracker',
+                  isSelected: !_showOngoing,
+                  onTap: () => setState(() => _showOngoing = false),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'All Moods',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'All Moods',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: const Text('Most recent'),
-                  label: const Icon(Icons.arrow_upward, size: 16),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey.shade600,
-                  ),
+              ),
+              TextButton.icon(
+                onPressed: () {},
+                icon: const Text('Most recent'),
+                label: const Icon(Icons.arrow_upward, size: 16),
+                style: TextButton.styleFrom(
+                  foregroundColor: isDark
+                      ? Colors.grey.shade400
+                      : Colors.grey.shade600,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ValueListenableBuilder(
-              valueListenable: Hive.box<MoodEntry>(
-                AppConstants.hiveBoxName,
-              ).listenable(),
-              builder: (context, Box<MoodEntry> box, _) {
-                final entries = repository.getAllEntries().reversed.toList();
+        ),
+        Expanded(
+          child: ValueListenableBuilder(
+            valueListenable: Hive.box<MoodEntry>(
+              AppConstants.hiveBoxName,
+            ).listenable(),
+            builder: (context, Box<MoodEntry> box, _) {
+              final entries = repository.getAllEntries().reversed.toList();
 
-                if (entries.isEmpty) {
-                  return const EmptyState(message: 'No mood entries yet');
-                }
+              if (entries.isEmpty) {
+                return const EmptyState(message: 'No mood entries yet');
+              }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    final entry = entries[index];
-                    return _MoodCard(
-                      entry: entry,
-                      color: AppConstants.moodColors[entry.moodLevel],
-                    );
-                  },
-                );
-              },
-            ),
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: entries.length,
+                itemBuilder: (context, index) {
+                  final entry = entries[index];
+                  return _MoodCard(
+                    entry: entry,
+                    color: AppConstants.moodColors[entry.moodLevel],
+                  );
+                },
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -120,17 +115,21 @@ class _TabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected
+              ? (isDark ? const Color(0xFF2C2C2C) : Colors.white)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -143,7 +142,9 @@ class _TabButton extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              color: isSelected ? Colors.black87 : Colors.grey.shade600,
+              color: isSelected
+                  ? (isDark ? Colors.white : Colors.black87)
+                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
             ),
           ),
         ),
@@ -177,13 +178,17 @@ class _MoodCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM\ndd');
     final timeFormat = DateFormat('hh:mm a');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: isDark
+            ? Border.all(color: color.withValues(alpha: 0.3), width: 1)
+            : null,
       ),
       child: Row(
         children: [
@@ -214,10 +219,10 @@ class _MoodCard extends StatelessWidget {
               children: [
                 Text(
                   AppConstants.moodLabels[entry.moodLevel],
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -226,28 +231,36 @@ class _MoodCard extends StatelessWidget {
                     Icon(
                       Icons.access_time,
                       size: 14,
-                      color: Colors.grey.shade600,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       timeFormat.format(entry.timestamp),
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.grey.shade600,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Icon(
                       Icons.timer_outlined,
                       size: 14,
-                      color: Colors.grey.shade600,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       _getTimeAgo(entry.timestamp),
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.grey.shade600,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -256,7 +269,12 @@ class _MoodCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     entry.note!,
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark
+                          ? Colors.grey.shade300
+                          : Colors.grey.shade700,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),

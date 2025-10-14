@@ -12,84 +12,85 @@ class InsightsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repository = MoodRepository();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      // decoration: BoxDecoration(
-      //   gradient: LinearGradient(
-      //     begin: Alignment.topCenter,
-      //     end: Alignment.bottomCenter,
-      //     colors: [Colors.blue.shade50, Colors.white],
-      //   ),
-      // ),
-      child: ValueListenableBuilder(
-        valueListenable: Hive.box<MoodEntry>(AppConstants.hiveBoxName).listenable(),
-        builder: (context, Box<MoodEntry> box, _) {
-          final entries = repository.getAllEntries();
+    return ValueListenableBuilder(
+      valueListenable: Hive.box<MoodEntry>(
+        AppConstants.hiveBoxName,
+      ).listenable(),
+      builder: (context, Box<MoodEntry> box, _) {
+        final entries = repository.getAllEntries();
 
-          if (entries.isEmpty) {
-            return const EmptyState(message: 'Log some moods to see insights');
-          }
+        if (entries.isEmpty) {
+          return const EmptyState(message: 'Log some moods to see insights');
+        }
 
-          // Calculate mood distribution
-          final moodCounts = <int, int>{};
-          for (var entry in entries) {
-            moodCounts[entry.moodLevel] = (moodCounts[entry.moodLevel] ?? 0) + 1;
-          }
+        // Calculate mood distribution
+        final moodCounts = <int, int>{};
+        for (var entry in entries) {
+          moodCounts[entry.moodLevel] = (moodCounts[entry.moodLevel] ?? 0) + 1;
+        }
 
-          final totalEntries = entries.length;
+        final totalEntries = entries.length;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                const Text(
-                  'Mood Distribution',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Text(
+                'Mood Distribution',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  height: 280,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      PieChart(
-                        PieChartData(
-                          sectionsSpace: 2,
-                          centerSpaceRadius: 80,
-                          sections: _buildPieChartSections(moodCounts, totalEntries),
-                          borderData: FlBorderData(show: false),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                height: 280,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    PieChart(
+                      PieChartData(
+                        sectionsSpace: 2,
+                        centerSpaceRadius: 80,
+                        sections: _buildPieChartSections(
+                          moodCounts,
+                          totalEntries,
                         ),
+                        borderData: FlBorderData(show: false),
                       ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '$totalEntries',
-                            style: const TextStyle(
-                              fontSize: 48,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$totalEntries',
+                          style: TextStyle(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
-                          const Text(
-                            'Total',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.black54,
-                            ),
+                        ),
+                        Text(
+                          'Total',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: isDark ? Colors.white70 : Colors.black54,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 40),
-                ..._buildMoodLegend(moodCounts, totalEntries),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              const SizedBox(height: 40),
+              ..._buildMoodLegend(moodCounts, totalEntries, isDark),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -99,10 +100,9 @@ class InsightsScreen extends StatelessWidget {
   ) {
     final sections = <PieChartSectionData>[];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       final count = moodCounts[i] ?? 0;
       if (count > 0) {
-        final percentage = (count / total) * 100;
         sections.add(
           PieChartSectionData(
             color: AppConstants.moodColorsDark[i],
@@ -122,10 +122,14 @@ class InsightsScreen extends StatelessWidget {
     return sections;
   }
 
-  List<Widget> _buildMoodLegend(Map<int, int> moodCounts, int total) {
+  List<Widget> _buildMoodLegend(
+    Map<int, int> moodCounts,
+    int total,
+    bool isDark,
+  ) {
     final items = <Widget>[];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       final count = moodCounts[i] ?? 0;
       if (count > 0) {
         final percentage = ((count / total) * 100).round();
@@ -146,10 +150,10 @@ class InsightsScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     AppConstants.moodLabels[i],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black87,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
                 ),
@@ -157,16 +161,16 @@ class InsightsScreen extends StatelessWidget {
                   '$count entries',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey.shade600,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   '$percentage%',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
               ],

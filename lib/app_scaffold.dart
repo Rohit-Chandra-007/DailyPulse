@@ -4,7 +4,9 @@ import 'features/history/history_screen.dart';
 import 'features/insights/insights_screen.dart';
 
 class AppScaffold extends StatefulWidget {
-  const AppScaffold({super.key});
+  final VoidCallback onThemeToggle;
+
+  const AppScaffold({super.key, required this.onThemeToggle});
 
   @override
   State<AppScaffold> createState() => _AppScaffoldState();
@@ -17,48 +19,62 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade200, Colors.blue.shade50],
-          ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? [const Color(0xFF1E1E1E), const Color(0xFF121212)]
+              : [Colors.blue.shade200, Colors.blue.shade100],
         ),
-        child: SafeArea(child: _screens[_currentIndex]),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
+
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+          body: _screens[_currentIndex],
+          floatingActionButton: FloatingActionButton(
+            onPressed: widget.onThemeToggle,
+            tooltip: isDark ? 'Light mode' : 'Dark mode',
+            elevation: 4,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return RotationTransition(
+                  turns: animation,
+                  child: ScaleTransition(scale: animation, child: child),
+                );
+              },
+              child: Icon(
+                isDark ? Icons.light_mode : Icons.dark_mode,
+                key: ValueKey(isDark),
+              ),
             ),
-          ],
-        ),
-        child: NavigationBar(
-          selectedIndex: _currentIndex,
-          onDestinationSelected: (index) =>
-              setState(() => _currentIndex = index),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.add_circle_outline),
-              selectedIcon: Icon(Icons.add_circle),
-              label: 'Log',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.history_outlined),
-              selectedIcon: Icon(Icons.history),
-              label: 'History',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.insights_outlined),
-              selectedIcon: Icon(Icons.insights),
-              label: 'Insights',
-            ),
-          ],
+          ),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (index) =>
+                setState(() => _currentIndex = index),
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.add_circle_outline),
+                selectedIcon: Icon(Icons.add_circle),
+                label: 'Log',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.history_outlined),
+                selectedIcon: Icon(Icons.history),
+                label: 'History',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.insights_outlined),
+                selectedIcon: Icon(Icons.insights),
+                label: 'Insights',
+              ),
+            ],
+          ),
         ),
       ),
     );
