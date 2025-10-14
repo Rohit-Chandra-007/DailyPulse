@@ -9,14 +9,6 @@ import '../widgets/empty_state.dart';
 class InsightsScreen extends StatelessWidget {
   const InsightsScreen({super.key});
 
-  final List<Color> _moodColors = const [
-    Color(0xFFFF6B6B), // Terrible - red
-    Color(0xFFFFB366), // Bad - orange
-    Color(0xFFFFE66D), // Okay - yellow
-    Color(0xFF95E1D3), // Good - teal
-    Color(0xFF6BCF7F), // Great - green
-  ];
-
   @override
   Widget build(BuildContext context) {
     final repository = MoodRepository();
@@ -113,7 +105,7 @@ class InsightsScreen extends StatelessWidget {
         final percentage = (count / total) * 100;
         sections.add(
           PieChartSectionData(
-            color: _moodColors[i],
+            color: AppConstants.moodColorsDark[i],
             value: count.toDouble(),
             title: '',
             radius: 50,
@@ -146,7 +138,7 @@ class InsightsScreen extends StatelessWidget {
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: _moodColors[i],
+                    color: AppConstants.moodColorsDark[i],
                     shape: BoxShape.circle,
                   ),
                 ),

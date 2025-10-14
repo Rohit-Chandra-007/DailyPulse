@@ -16,17 +16,7 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   bool _showOngoing = true;
 
-  final List<Color> _moodColors = [
-    const Color(0xFFFFCDD2), // Terrible - light red
-    const Color(0xFFFFE0B2), // Bad - light orange
-    const Color(0xFFFFF9C4), // Okay - light yellow
-    const Color(0xFFC8E6C9), // Good - light green
-    const Color(0xFFE1BEE7), // Great - light purple
-  ];
 
-  Color _getMoodColor(int level) {
-    return _moodColors[level];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +97,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     final entry = entries[index];
                     return _MoodCard(
                       entry: entry,
-                      color: _getMoodColor(entry.moodLevel),
+                      color: AppConstants.moodColors[entry.moodLevel],
                     );
                   },
                 );
