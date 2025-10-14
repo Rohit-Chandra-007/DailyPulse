@@ -23,16 +23,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final repository = MoodRepository();
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.blue.shade50,
-            Colors.white,
-          ],
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   gradient: LinearGradient(
+      //     begin: Alignment.topCenter,
+      //     end: Alignment.bottomCenter,
+      //     colors: [
+      //       Colors.blue.shade50,
+      //       Colors.white,
+      //     ],
+      //   ),
+      // ),
       child: Column(
         children: [
           Padding(

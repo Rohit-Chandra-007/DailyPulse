@@ -14,13 +14,13 @@ class InsightsScreen extends StatelessWidget {
     final repository = MoodRepository();
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.blue.shade50, Colors.white],
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   gradient: LinearGradient(
+      //     begin: Alignment.topCenter,
+      //     end: Alignment.bottomCenter,
+      //     colors: [Colors.blue.shade50, Colors.white],
+      //   ),
+      // ),
       child: ValueListenableBuilder(
         valueListenable: Hive.box<MoodEntry>(AppConstants.hiveBoxName).listenable(),
         builder: (context, Box<MoodEntry> box, _) {
