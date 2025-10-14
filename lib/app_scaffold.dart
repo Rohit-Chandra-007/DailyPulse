@@ -15,18 +15,15 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   final _screens = const [LogMoodScreen(), HistoryScreen(), InsightsScreen()];
 
-  final _titles = const ['Log Mood', 'Your Library', 'Insights'];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text(_titles[_currentIndex])),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade100, Colors.blue.shade50],
+            colors: [Colors.blue.shade200, Colors.blue.shade50],
           ),
         ),
         child: SafeArea(child: _screens[_currentIndex]),
@@ -35,7 +32,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),

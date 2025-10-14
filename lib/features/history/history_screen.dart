@@ -16,8 +16,6 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   bool _showOngoing = true;
 
-
-
   @override
   Widget build(BuildContext context) {
     final repository = MoodRepository();
@@ -64,10 +62,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               children: [
                 const Text(
                   'All Moods',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 TextButton.icon(
                   onPressed: () {},
@@ -82,7 +77,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           Expanded(
             child: ValueListenableBuilder(
-              valueListenable: Hive.box<MoodEntry>(AppConstants.hiveBoxName).listenable(),
+              valueListenable: Hive.box<MoodEntry>(
+                AppConstants.hiveBoxName,
+              ).listenable(),
               builder: (context, Box<MoodEntry> box, _) {
                 final entries = repository.getAllEntries().reversed.toList();
 
@@ -159,10 +156,7 @@ class _MoodCard extends StatelessWidget {
   final MoodEntry entry;
   final Color color;
 
-  const _MoodCard({
-    required this.entry,
-    required this.color,
-  });
+  const _MoodCard({required this.entry, required this.color});
 
   String _getTimeAgo(DateTime timestamp) {
     final now = DateTime.now();
@@ -188,7 +182,7 @@ class _MoodCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.3),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -229,7 +223,11 @@ class _MoodCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       timeFormat.format(entry.timestamp),
@@ -239,7 +237,11 @@ class _MoodCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Icon(Icons.timer_outlined, size: 14, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.timer_outlined,
+                      size: 14,
+                      color: Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       _getTimeAgo(entry.timestamp),
@@ -254,10 +256,7 @@ class _MoodCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     entry.note!,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade700,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -268,10 +267,7 @@ class _MoodCard extends StatelessWidget {
           Container(
             width: 56,
             height: 56,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             child: Center(
               child: Text(
                 AppConstants.moodEmojis[entry.moodLevel],
