@@ -14,8 +14,7 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  bool _showOngoing = true;
-
+ 
   @override
   Widget build(BuildContext context) {
     final repository = MoodRepository();
@@ -69,56 +68,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 }
 
-class _TabButton extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _TabButton({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark ? const Color(0xFF2C2C2C) : Colors.white)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              color: isSelected
-                  ? (isDark ? Colors.white : Colors.black87)
-                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _MoodCard extends StatelessWidget {
   final MoodEntry entry;
