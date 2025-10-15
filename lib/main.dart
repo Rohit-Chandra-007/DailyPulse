@@ -1,5 +1,7 @@
 import 'package:dailypulse/core/app_theme/theme.dart';
 import 'package:dailypulse/core/providers/auth_provider.dart';
+import 'package:dailypulse/core/providers/history_provider.dart';
+import 'package:dailypulse/core/providers/insights_provider.dart';
 import 'package:dailypulse/core/providers/mood_provider.dart';
 import 'package:dailypulse/core/providers/theme_provider.dart';
 
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MoodProvider()),
+        ChangeNotifierProvider(create: (_) => HistoryProvider()),
+        ChangeNotifierProvider(create: (_) => InsightsProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, theme, _) {

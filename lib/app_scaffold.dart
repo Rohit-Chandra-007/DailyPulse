@@ -8,7 +8,6 @@ import 'features/insights/screen/insights_screen.dart';
 import 'features/settings/screen/settings_screen.dart';
 import 'core/widgets/nav_bar_item.dart';
 
-
 class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key});
 
