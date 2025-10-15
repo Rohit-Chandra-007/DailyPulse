@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../data/models/mood_entry.dart';
-import '../../data/repo/mood_repository.dart';
-import '../../core/constants.dart';
-import '../widgets/empty_state.dart';
+import '../../../data/models/mood_entry.dart';
+import '../../../data/repo/mood_repository.dart';
+import '../../../core/constant/constants.dart';
+import '../../../core/widgets/empty_state.dart';
 
 class InsightsScreen extends StatefulWidget {
   const InsightsScreen({super.key});

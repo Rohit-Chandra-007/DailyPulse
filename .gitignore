@@ -43,3 +43,28 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase Configuration Files
+# Note: Firebase API keys in mobile apps are not secret, but we ignore these
+# to avoid accidentally committing sensitive configuration changes
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+ios/firebase_app_id_file.json
+lib/firebase_options.dart
+
+# Environment Variables (if you add any)
+.env
+.env.local
+.env.*.local
+
+# Secrets and API Keys (if you add any)
+secrets.json
+api_keys.dart
+*.key
+*.pem
+*.p12
+*.jks
+keystore.properties
+
+# Local configuration
+local.properties

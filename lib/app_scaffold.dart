@@ -1,14 +1,16 @@
+import 'package:dailypulse/core/providers/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'features/log/log_mood_screen.dart';
-import 'features/history/history_screen.dart';
-import 'features/insights/insights_screen.dart';
-import 'features/widgets/nav_bar_item.dart';
+import 'package:provider/provider.dart';
+import 'features/log/screen/log_mood_screen.dart';
+import 'features/history/screen/history_screen.dart';
+import 'features/insights/screen/insights_screen.dart';
+import 'features/settings/screen/settings_screen.dart';
+import 'core/widgets/nav_bar_item.dart';
+
 
 class AppScaffold extends StatefulWidget {
-  final VoidCallback onThemeToggle;
-
-  const AppScaffold({super.key, required this.onThemeToggle});
+  const AppScaffold({super.key});
 
   @override
   State<AppScaffold> createState() => _AppScaffoldState();
@@ -20,7 +22,12 @@ class _AppScaffoldState extends State<AppScaffold>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
-  final _screens = const [LogMoodScreen(), HistoryScreen(), InsightsScreen()];
+  final _screens = const [
+    LogMoodScreen(),
+    HistoryScreen(),
+    InsightsScreen(),
+    SettingsScreen(),
+  ];
 
   @override
   void initState() {
@@ -52,6 +59,8 @@ class _AppScaffoldState extends State<AppScaffold>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final authProvider = context.watch<AuthProvider>();
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -70,29 +79,23 @@ class _AppScaffoldState extends State<AppScaffold>
       child: SafeArea(
         bottom: false,
         child: Scaffold(
+          appBar: _currentIndex == 3
+              ? null
+              : AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  title: Text(
+                    authProvider.user?.displayName != null
+                        ? 'Hello, ${authProvider.user!.displayName}'
+                        : 'DailyPulse',
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.blue.shade900,
+                    ),
+                  ),
+                ),
           body: FadeTransition(
             opacity: _fadeAnimation,
             child: _screens[_currentIndex],
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: widget.onThemeToggle,
-            tooltip: isDark ? 'Switch to light mode' : 'Switch to dark mode',
-            elevation: 4,
-            backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.white,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) {
-                return RotationTransition(
-                  turns: animation,
-                  child: ScaleTransition(scale: animation, child: child),
-                );
-              },
-              child: Icon(
-                isDark ? Icons.light_mode : Icons.dark_mode,
-                key: ValueKey(isDark),
-                color: isDark ? Colors.amber : Colors.grey.shade800,
-              ),
-            ),
           ),
           bottomNavigationBar: Container(
             margin: const EdgeInsets.all(16),
@@ -133,6 +136,14 @@ class _AppScaffoldState extends State<AppScaffold>
                   label: 'Insights',
                   isSelected: _currentIndex == 2,
                   onTap: () => _onTabChanged(2),
+                  isDark: isDark,
+                ),
+                NavBarItem(
+                  icon: CupertinoIcons.settings,
+                  selectedIcon: CupertinoIcons.settings_solid,
+                  label: 'Settings',
+                  isSelected: _currentIndex == 3,
+                  onTap: () => _onTabChanged(3),
                   isDark: isDark,
                 ),
               ],
