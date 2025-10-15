@@ -76,8 +76,9 @@ class _AppScaffoldState extends State<AppScaffold>
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: widget.onThemeToggle,
-            tooltip: isDark ? 'Light mode' : 'Dark mode',
+            tooltip: isDark ? 'Switch to light mode' : 'Switch to dark mode',
             elevation: 4,
+            backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.white,
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (child, animation) {
@@ -89,6 +90,7 @@ class _AppScaffoldState extends State<AppScaffold>
               child: Icon(
                 isDark ? Icons.light_mode : Icons.dark_mode,
                 key: ValueKey(isDark),
+                color: isDark ? Colors.amber : Colors.grey.shade800,
               ),
             ),
           ),

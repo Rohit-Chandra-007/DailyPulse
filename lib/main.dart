@@ -19,11 +19,20 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
 
-  void _toggleTheme() {
+  void _toggleTheme(BuildContext context) {
     setState(() {
-      _themeMode = _themeMode == ThemeMode.light
-          ? ThemeMode.dark
-          : ThemeMode.light;
+      if (_themeMode == ThemeMode.system) {
+        // If currently using system theme, switch based on current brightness
+        final brightness = MediaQuery.platformBrightnessOf(context);
+        _themeMode = brightness == Brightness.dark
+            ? ThemeMode.light
+            : ThemeMode.dark;
+      } else {
+        // Toggle between light and dark
+        _themeMode = _themeMode == ThemeMode.light
+            ? ThemeMode.dark
+            : ThemeMode.light;
+      }
     });
   }
 
@@ -34,7 +43,10 @@ class _MyAppState extends State<MyApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
-      home: AppScaffold(onThemeToggle: _toggleTheme),
+      home: Builder(
+        builder: (context) =>
+            AppScaffold(onThemeToggle: () => _toggleTheme(context)),
+      ),
     );
   }
 }

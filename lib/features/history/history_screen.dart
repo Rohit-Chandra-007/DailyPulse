@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 import '../../data/models/mood_entry.dart';
 import '../../data/repo/mood_repository.dart';
 import '../../core/constants.dart';
-import '../widgets/empty_state.dart';
+
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -14,6 +15,8 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  DateTime _selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     final repository = MoodRepository();
@@ -21,38 +24,150 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-          child: SizedBox(
-            width: double.infinity,
-            child: Text(
-              'All Moods',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+        // Calendar Timeline
+        Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select Date',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
               ),
-              textAlign: TextAlign.left,
-            ),
+              const SizedBox(height: 12),
+              EasyDateTimeLine(
+                initialDate: _selectedDate,
+                onDateChange: (selectedDate) {
+                  setState(() => _selectedDate = selectedDate);
+                },
+                headerProps: const EasyHeaderProps(showHeader: false),
+                dayProps: EasyDayProps(
+                  height: 60,
+                  width: 60,
+                  dayStructure: DayStructure.dayStrDayNum,
+                  inactiveDayStyle: DayStyle(
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    dayNumStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      fontSize: 16,
+                    ),
+                    dayStrStyle: TextStyle(
+                      color: isDark ? Colors.white54 : Colors.black38,
+                      fontSize: 12,
+                    ),
+                  ),
+                  activeDayStyle: DayStyle(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2196F3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    dayNumStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    dayStrStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+
+        // Mood entries for selected date
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                DateFormat('MMMM d, y').format(_selectedDate),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
         Expanded(
           child: ValueListenableBuilder(
-            valueListenable: Hive.box<MoodEntry>(
-              AppConstants.hiveBoxName,
-            ).listenable(),
+            valueListenable: Hive.box<MoodEntry>(AppConstants.hiveBoxName).listenable(),
             builder: (context, Box<MoodEntry> box, _) {
-              final entries = repository.getAllEntries().reversed.toList();
+              final allEntries = repository.getAllEntries();
+              
+              // Filter entries for selected date
+              final selectedDateEntries = allEntries.where((entry) {
+                final entryDate = DateTime(
+                  entry.timestamp.year,
+                  entry.timestamp.month,
+                  entry.timestamp.day,
+                );
+                final selected = DateTime(
+                  _selectedDate.year,
+                  _selectedDate.month,
+                  _selectedDate.day,
+                );
+                return entryDate.isAtSameMomentAs(selected);
+              }).toList();
 
-              if (entries.isEmpty) {
-                return const EmptyState(message: 'No mood entries yet');
+              selectedDateEntries.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+              if (selectedDateEntries.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.calendar_today_outlined,
+                        size: 64,
+                        color: Colors.grey.shade400,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No moods logged',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'on ${DateFormat('MMMM d').format(_selectedDate)}',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: isDark ? Colors.white54 : Colors.black38,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
 
               return ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: entries.length,
+                itemCount: selectedDateEntries.length,
                 itemBuilder: (context, index) {
-                  final entry = entries[index];
+                  final entry = selectedDateEntries[index];
                   return _MoodCard(
                     entry: entry,
                     color: AppConstants.moodColors[entry.moodLevel],
@@ -90,7 +205,6 @@ class _MoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('MMM\ndd');
     final timeFormat = DateFormat('hh:mm a');
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -100,9 +214,7 @@ class _MoodCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: isDark
-            ? Border.all(color: color.withValues(alpha: 0.3), width: 1)
-            : null,
+        border: isDark ? Border.all(color: color.withValues(alpha: 0.3), width: 1) : null,
       ),
       child: Row(
         children: [
@@ -111,18 +223,12 @@ class _MoodCard extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(16),
+              shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
-                dateFormat.format(entry.timestamp),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                  height: 1.2,
-                ),
+                AppConstants.moodEmojis[entry.moodLevel],
+                style: const TextStyle(fontSize: 32),
               ),
             ),
           ),
@@ -145,66 +251,45 @@ class _MoodCard extends StatelessWidget {
                     Icon(
                       Icons.access_time,
                       size: 14,
-                      color: isDark
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       timeFormat.format(entry.timestamp),
                       style: TextStyle(
                         fontSize: 13,
-                        color: isDark
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade600,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Icon(
                       Icons.timer_outlined,
                       size: 14,
-                      color: isDark
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       _getTimeAgo(entry.timestamp),
                       style: TextStyle(
                         fontSize: 13,
-                        color: isDark
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade600,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                       ),
                     ),
                   ],
                 ),
                 if (entry.note != null && entry.note!.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
                     entry.note!,
                     style: TextStyle(
-                      fontSize: 13,
-                      color: isDark
-                          ? Colors.grey.shade300
-                          : Colors.grey.shade700,
+                      fontSize: 14,
+                      color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
                     ),
-                    maxLines: 2,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ],
-            ),
-          ),
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            child: Center(
-              child: Text(
-                AppConstants.moodEmojis[entry.moodLevel],
-                style: const TextStyle(fontSize: 32),
-              ),
             ),
           ),
         ],
