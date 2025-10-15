@@ -100,9 +100,6 @@ flutter build appbundle              # Build Android App Bundle (for Play Store)
 # Build iOS
 flutter build ios                    # Build iOS app (requires macOS)
 
-# Testing & Analysis
-flutter test                         # Run tests
-flutter analyze                      # Analyze code
 
 # Code Generation
 flutter pub run build_runner build   # Generate Hive adapters
