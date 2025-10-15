@@ -33,8 +33,8 @@ DailyPulse demonstrates modern Flutter development practices with clean architec
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dailypulse.git
-cd dailypulse
+git clone https://github.com/Rohit-Chandra-007/DailyPulse.git
+cd DailyPulse
 
 # Install dependencies
 flutter pub get
@@ -91,23 +91,21 @@ service cloud.firestore {
 ```bash
 # Development
 flutter run                          # Run on connected device
-flutter run -d chrome                # Run on Chrome (web)
 flutter run --release                # Run in release mode
 
-# Build
+# Build Android
 flutter build apk                    # Build Android APK
-flutter build appbundle              # Build Android App Bundle
-flutter build ios                    # Build iOS app
-flutter build web                    # Build web app
+flutter build appbundle              # Build Android App Bundle (for Play Store)
+
+# Build iOS
+flutter build ios                    # Build iOS app (requires macOS)
 
 # Testing & Analysis
 flutter test                         # Run tests
 flutter analyze                      # Analyze code
-flutter pub outdated                 # Check outdated packages
 
 # Code Generation
-flutter pub run build_runner build   # Generate code once
-flutter pub run build_runner watch   # Watch for changes
+flutter pub run build_runner build   # Generate Hive adapters
 ```
 
 ## Dependencies
@@ -244,10 +242,15 @@ percentage = (count of specific mood / total entries) × 100
 ## Tech Stack
 
 - **Framework:** Flutter 3.9.2+
+- **Platforms:** iOS & Android
 - **State Management:** Provider
 - **Local Database:** Hive
 - **Backend:** Firebase (Auth + Firestore)
 - **UI:** Material Design 3
+
+## Repository
+
+**GitHub:** [Rohit-Chandra-007/DailyPulse](https://github.com/Rohit-Chandra-007/DailyPulse)
 
 ## License
 
@@ -255,5 +258,5 @@ MIT License - feel free to use this project for learning or personal use.
 
 ---
 
-**Built with Flutter** • Inspired by Dribbble designs
+**Built with Flutter** • iOS & Android • Inspired by Dribbble designs
 # DailyPulse
