@@ -94,6 +94,34 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Handle sign in with validation and error handling
+  Future<void> handleSignIn({
+    required String email,
+    required String password,
+    required Function(String) onError,
+  }) async {
+    final success = await signIn(email: email, password: password);
+    if (!success && _errorMessage != null) {
+      onError(_errorMessage!);
+    }
+  }
+
+  // Handle sign up with validation and error handling
+  Future<void> handleSignUp({
+    required String email,
+    required String password,
+    required String name,
+    required Function() onSuccess,
+    required Function(String) onError,
+  }) async {
+    final success = await signUp(email: email, password: password, name: name);
+    if (success) {
+      onSuccess();
+    } else if (_errorMessage != null) {
+      onError(_errorMessage!);
+    }
+  }
+
   String _getErrorMessage(String code) {
     switch (code) {
       case 'weak-password':

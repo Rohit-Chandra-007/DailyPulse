@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import '../mood_option.dart';
+import '../models/mood_option.dart';
 
 class MoodCard extends StatelessWidget {
   final MoodOption mood;
   final VoidCallback onTap;
 
-  const MoodCard({super.key, required this.mood, required this.onTap});
+  const MoodCard({
+    super.key,
+    required this.mood,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +50,10 @@ class MoodCard extends StatelessWidget {
                   tag: 'mood_emoji_${mood.level}',
                   child: Material(
                     color: Colors.transparent,
-                    child: Text(mood.emoji, style: const TextStyle(fontSize: 48)),
+                    child: Text(
+                      mood.emoji,
+                      style: const TextStyle(fontSize: 48),
+                    ),
                   ),
                 ),
               ),

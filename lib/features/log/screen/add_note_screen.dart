@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../data/models/mood_entry.dart';
-import '../../../data/repo/mood_repository.dart';
-import '../mood_option.dart';
+import 'package:provider/provider.dart';
+import '../../../core/providers/mood_provider.dart';
+import '../../../core/utils/snackbar_utils.dart';
+import '../models/mood_option.dart';
 
 class AddNoteScreen extends StatefulWidget {
   final MoodOption mood;
-  final MoodRepository repository;
+  final String userId;
 
   const AddNoteScreen({
     super.key,
     required this.mood,
-    required this.repository,
+    required this.userId,
   });
 
   @override
@@ -27,18 +28,21 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   }
 
   Future<void> _saveMood() async {
-    final entry = MoodEntry(
-      timestamp: DateTime.now(),
+    final moodProvider = context.read<MoodProvider>();
+    
+    final success = await moodProvider.saveMood(
       moodLevel: widget.mood.level,
-      note: _noteController.text.isEmpty ? null : _noteController.text,
+      userId: widget.userId,
+      note: _noteController.text,
     );
 
-    await widget.repository.addMoodEntry(entry);
     if (mounted) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mood logged!')),
-      );
+      if (success) {
+        SnackbarUtils.showSuccess(context, 'Mood logged successfully!');
+      } else {
+        SnackbarUtils.showInfo(context, 'Mood saved locally, will sync when online');
+      }
     }
   }
 
