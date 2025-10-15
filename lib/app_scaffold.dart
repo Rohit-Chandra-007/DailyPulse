@@ -102,13 +102,6 @@ class _AppScaffoldState extends State<AppScaffold>
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
               borderRadius: BorderRadius.circular(30),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
-              //     blurRadius: 20,
-              //     offset: const Offset(0, 4),
-              //   ),
-              // ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

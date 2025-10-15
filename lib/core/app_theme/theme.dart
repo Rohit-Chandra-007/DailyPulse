@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Consistent color palette from history screen
   static const Color primaryBlue = Color(0xFFB3D9FF);
   static const Color backgroundLight = Color(0xFFF5F9FF);
   static const Color cardBackground = Colors.white;

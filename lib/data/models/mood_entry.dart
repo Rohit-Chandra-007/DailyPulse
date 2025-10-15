@@ -28,7 +28,6 @@ class MoodEntry extends HiveObject {
     this.userId,
   });
 
-  // Convert to Firestore document
   Map<String, dynamic> toFirestore() {
     return {
       'timestamp': Timestamp.fromDate(timestamp),
@@ -39,7 +38,6 @@ class MoodEntry extends HiveObject {
     };
   }
 
-  // Create from Firestore document
   factory MoodEntry.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return MoodEntry(
@@ -51,7 +49,6 @@ class MoodEntry extends HiveObject {
     );
   }
 
-  // Create a copy with updated fields
   MoodEntry copyWith({
     DateTime? timestamp,
     int? moodLevel,

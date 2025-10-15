@@ -20,6 +20,7 @@ class AddNoteScreen extends StatefulWidget {
 
 class _AddNoteScreenState extends State<AddNoteScreen> {
   final _noteController = TextEditingController();
+  static const int _maxCharacters = 500;
 
   @override
   void dispose() {
@@ -60,7 +61,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         bottom: false,
         child: Column(
           children: [
-            // Custom App Bar
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -97,7 +97,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 ],
               ),
             ),
-            // Emoji and Text Section
             Expanded(
               child: Center(
                 child: Column(
@@ -150,7 +149,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 ),
               ),
             ),
-            // Bottom Sheet
             Container(
               padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
               decoration: BoxDecoration(
@@ -204,7 +202,22 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                       fillColor: fillColor,
                     ),
                     maxLines: 4,
+                    maxLength: _maxCharacters,
                     style: TextStyle(fontSize: 15, color: textColor),
+                    buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          '$currentLength / $_maxCharacters characters',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: currentLength > _maxCharacters * 0.9
+                                ? Colors.orange
+                                : hintColor,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 20),
                   SizedBox(

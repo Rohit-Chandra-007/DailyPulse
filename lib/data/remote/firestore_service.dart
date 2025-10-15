@@ -5,7 +5,6 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static const String _moodsCollection = 'moods';
 
-  // Add a mood entry to Firestore
   Future<String?> addMoodEntry(MoodEntry entry) async {
     try {
       final docRef = await _firestore.collection(_moodsCollection).add(
@@ -18,7 +17,6 @@ class FirestoreService {
     }
   }
 
-  // Get all mood entries for a specific user
   Future<List<MoodEntry>> getUserMoodEntries(String userId) async {
     try {
       final querySnapshot = await _firestore
@@ -36,7 +34,6 @@ class FirestoreService {
     }
   }
 
-  // Stream of mood entries for real-time updates
   Stream<List<MoodEntry>> streamUserMoodEntries(String userId) {
     return _firestore
         .collection(_moodsCollection)
@@ -47,7 +44,6 @@ class FirestoreService {
             snapshot.docs.map((doc) => MoodEntry.fromFirestore(doc)).toList());
   }
 
-  // Update a mood entry
   Future<bool> updateMoodEntry(String docId, MoodEntry entry) async {
     try {
       await _firestore.collection(_moodsCollection).doc(docId).update(
@@ -60,7 +56,6 @@ class FirestoreService {
     }
   }
 
-  // Delete a mood entry
   Future<bool> deleteMoodEntry(String docId) async {
     try {
       await _firestore.collection(_moodsCollection).doc(docId).delete();
@@ -71,17 +66,14 @@ class FirestoreService {
     }
   }
 
-  // Sync local entries to Firestore (for offline entries)
   Future<void> syncLocalEntries(List<MoodEntry> entries) async {
     for (final entry in entries) {
       if (entry.id == null) {
-        // Entry doesn't have Firestore ID, upload it
         await addMoodEntry(entry);
       }
     }
   }
 
-  // Get mood entries for a date range
   Future<List<MoodEntry>> getMoodEntriesInRange(
     String userId,
     DateTime startDate,

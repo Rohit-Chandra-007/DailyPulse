@@ -1,6 +1,5 @@
 import 'package:dailypulse/core/app_theme/theme.dart';
 import 'package:dailypulse/core/providers/auth_provider.dart';
-import 'package:dailypulse/core/providers/history_provider.dart';
 import 'package:dailypulse/core/providers/insights_provider.dart';
 import 'package:dailypulse/core/providers/mood_provider.dart';
 import 'package:dailypulse/core/providers/theme_provider.dart';
@@ -17,11 +16,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await HiveService.init();
-  
-  
+
   final moodRepo = MoodRepository();
   moodRepo.startBackgroundSync();
-  
+
   runApp(const MyApp());
 }
 
@@ -35,7 +33,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MoodProvider()),
-        ChangeNotifierProvider(create: (_) => HistoryProvider()),
         ChangeNotifierProvider(create: (_) => InsightsProvider()),
       ],
       child: Consumer<ThemeProvider>(

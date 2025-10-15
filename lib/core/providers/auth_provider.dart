@@ -94,7 +94,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Handle sign in with validation and error handling
   Future<void> handleSignIn({
     required String email,
     required String password,
@@ -106,7 +105,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Handle sign up with validation and error handling
   Future<void> handleSignUp({
     required String email,
     required String password,
