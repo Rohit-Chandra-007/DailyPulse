@@ -8,8 +8,8 @@ import '../models/mood_option.dart';
 import '../widgets/mood_card.dart';
 import 'add_note_screen.dart';
 
-class LogMoodScreen extends StatelessWidget {
-  const LogMoodScreen({super.key});
+class HomeMoodScreen extends StatelessWidget {
+  const HomeMoodScreen({super.key});
 
   void _onMoodSelected(BuildContext context, MoodOption mood) {
     final authProvider = context.read<AuthProvider>();

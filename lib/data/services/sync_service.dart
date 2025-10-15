@@ -21,7 +21,7 @@ class SyncService {
           syncPendingEntries();
         }
       });
-    } catch (e) {
+    } catch (_) {
     }
   }
 
@@ -49,7 +49,7 @@ class SyncService {
           }
         }
       }
-    } catch (e) {
+    } catch (_) {
     } finally {
       _isSyncing = false;
     }

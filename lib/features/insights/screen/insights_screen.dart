@@ -27,13 +27,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
     final now = DateTime.now();
     switch (_selectedTimeWindow) {
       case 'week':
-        return allEntries.where((e) => 
-          now.difference(e.timestamp).inDays <= 7
-        ).toList();
+        return allEntries
+            .where((e) => now.difference(e.timestamp).inDays <= 7)
+            .toList();
       case 'month':
-        return allEntries.where((e) => 
-          now.difference(e.timestamp).inDays <= 30
-        ).toList();
+        return allEntries
+            .where((e) => now.difference(e.timestamp).inDays <= 30)
+            .toList();
       default:
         return allEntries;
     }
@@ -55,7 +55,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
             );
 
             if (allEntries.isEmpty) {
-              return const EmptyState(message: 'Log some moods to see insights');
+              return const EmptyState(
+                message: 'Log some moods to see insights',
+              );
             }
 
             final analytics = AnalyticsUtils.calculateAnalytics(allEntries);
@@ -86,19 +88,25 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     'Your emotional journey at a glance',
                     style: TextStyle(
                       fontSize: 15,
-                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   _buildTimeWindowFilter(isDark),
                   const SizedBox(height: 24),
-                  
+
                   _buildAverageMoodCard(avgMood, totalEntries, isDark),
                   const SizedBox(height: 20),
-                  
+
                   Expanded(
-                    child: _buildMoodDistribution(moodCounts, totalEntries, isDark),
+                    child: _buildMoodDistribution(
+                      moodCounts,
+                      totalEntries,
+                      isDark,
+                    ),
                   ),
                 ],
               ),
@@ -203,7 +211,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       'Average Mood',
                       style: TextStyle(
                         fontSize: 16,
-                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -233,9 +243,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF1E1E1E)
-                  : Colors.grey.shade50,
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade50,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -264,7 +272,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
   }
 
   Widget _buildMoodDistribution(
-      Map<int, int> moodCounts, int totalEntries, bool isDark) {
+    Map<int, int> moodCounts,
+    int totalEntries,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -304,7 +315,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
               itemBuilder: (context, index) {
                 final count = moodCounts[index] ?? 0;
                 if (count == 0) return const SizedBox.shrink();
-                
+
                 final percentage = ((count / totalEntries) * 100).round();
                 final color = AppConstants.moodColorsDark[index];
 

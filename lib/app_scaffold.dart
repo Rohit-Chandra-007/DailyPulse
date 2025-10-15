@@ -2,7 +2,7 @@ import 'package:dailypulse/core/providers/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'features/log/screen/log_mood_screen.dart';
+import 'features/home/screen/home_mood_screen.dart';
 import 'features/history/screen/history_screen.dart';
 import 'features/insights/screen/insights_screen.dart';
 import 'features/settings/screen/settings_screen.dart';
@@ -22,7 +22,7 @@ class _AppScaffoldState extends State<AppScaffold>
   late Animation<double> _fadeAnimation;
 
   final _screens = const [
-    LogMoodScreen(),
+    HomeMoodScreen(),
     HistoryScreen(),
     InsightsScreen(),
     SettingsScreen(),
@@ -109,7 +109,7 @@ class _AppScaffoldState extends State<AppScaffold>
                 NavBarItem(
                   icon: CupertinoIcons.smiley,
                   selectedIcon: CupertinoIcons.smiley_fill,
-                  label: 'Log',
+                  label: 'Mood',
                   isSelected: _currentIndex == 0,
                   onTap: () => _onTabChanged(0),
                   isDark: isDark,

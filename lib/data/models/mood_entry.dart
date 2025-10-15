@@ -38,17 +38,6 @@ class MoodEntry extends HiveObject {
     };
   }
 
-  factory MoodEntry.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return MoodEntry(
-      id: doc.id,
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
-      moodLevel: data['moodLevel'] as int,
-      note: data['note'] as String?,
-      userId: data['userId'] as String?,
-    );
-  }
-
   MoodEntry copyWith({
     DateTime? timestamp,
     int? moodLevel,
