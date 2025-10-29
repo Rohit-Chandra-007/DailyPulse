@@ -36,7 +36,7 @@ class _SignInScreenState extends State<SignInScreen> {
         password: _passwordController.text,
         onError: (message) {
           if (mounted) {
-            SnackbarUtils.showError(context, message);
+            SnackBarUtils.showError(context, message);
           }
         },
       );

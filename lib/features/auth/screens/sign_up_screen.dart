@@ -40,12 +40,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         onSuccess: () {
           if (mounted) {
             Navigator.of(context).pop();
-            SnackbarUtils.showSuccess(context, 'Account created successfully!');
+            SnackBarUtils.showSuccess(context, 'Account created successfully!');
           }
         },
         onError: (message) {
           if (mounted) {
-            SnackbarUtils.showError(context, message);
+            SnackBarUtils.showError(context, message);
           }
         },
       );

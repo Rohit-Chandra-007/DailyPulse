@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../core/providers/mood_provider.dart';
 import '../../../core/utils/snackbar_utils.dart';
 import '../models/mood_option.dart';
@@ -8,11 +9,7 @@ class AddNoteScreen extends StatefulWidget {
   final MoodOption mood;
   final String userId;
 
-  const AddNoteScreen({
-    super.key,
-    required this.mood,
-    required this.userId,
-  });
+  const AddNoteScreen({super.key, required this.mood, required this.userId});
 
   @override
   State<AddNoteScreen> createState() => _AddNoteScreenState();
@@ -30,7 +27,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
   Future<void> _saveMood() async {
     final moodProvider = context.read<MoodProvider>();
-    
+
     final success = await moodProvider.saveMood(
       moodLevel: widget.mood.level,
       userId: widget.userId,
@@ -40,9 +37,12 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     if (mounted) {
       Navigator.pop(context);
       if (success) {
-        SnackbarUtils.showSuccess(context, 'Mood logged successfully!');
+        SnackBarUtils.showSuccess(context, 'Mood logged successfully!');
       } else {
-        SnackbarUtils.showInfo(context, 'Mood saved locally, will sync when online');
+        SnackBarUtils.showInfo(
+          context,
+          'Mood saved locally, will sync when online',
+        );
       }
     }
   }
@@ -204,20 +204,26 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     maxLines: 4,
                     maxLength: _maxCharacters,
                     style: TextStyle(fontSize: 15, color: textColor),
-                    buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          '$currentLength / $_maxCharacters characters',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: currentLength > _maxCharacters * 0.9
-                                ? Colors.orange
-                                : hintColor,
-                          ),
-                        ),
-                      );
-                    },
+                    buildCounter:
+                        (
+                          context, {
+                          required currentLength,
+                          required isFocused,
+                          maxLength,
+                        }) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              '$currentLength / $_maxCharacters characters',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: currentLength > _maxCharacters * 0.9
+                                    ? Colors.orange
+                                    : hintColor,
+                              ),
+                            ),
+                          );
+                        },
                   ),
                   const SizedBox(height: 20),
                   SizedBox(

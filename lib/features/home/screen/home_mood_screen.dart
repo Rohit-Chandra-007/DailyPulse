@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/routes/fade_page_route.dart';
+
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/routes/fade_page_route.dart';
 import '../../../core/utils/mood_utils.dart';
 import '../../../core/utils/snackbar_utils.dart';
 import '../models/mood_option.dart';
@@ -16,17 +17,14 @@ class HomeMoodScreen extends StatelessWidget {
     final userId = authProvider.user?.uid;
 
     if (userId == null) {
-      SnackbarUtils.showError(context, 'Please sign in to log your mood');
+      SnackBarUtils.showError(context, 'Please sign in to log your mood');
       return;
     }
 
     Navigator.push(
       context,
       FadePageRoute(
-        page: AddNoteScreen(
-          mood: mood,
-          userId: userId,
-        ),
+        page: AddNoteScreen(mood: mood, userId: userId),
       ),
     );
   }
