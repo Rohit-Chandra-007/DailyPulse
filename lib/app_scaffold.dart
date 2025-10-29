@@ -1,4 +1,5 @@
 import 'package:dailypulse/core/providers/auth_provider.dart';
+import 'package:dailypulse/core/providers/mood_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'features/history/screen/history_screen.dart';
 import 'features/insights/screen/insights_screen.dart';
 import 'features/settings/screen/settings_screen.dart';
 import 'core/widgets/nav_bar_item.dart';
+import 'core/utils/app_logger.dart';
 
 class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key});
@@ -39,6 +41,18 @@ class _AppScaffoldState extends State<AppScaffold>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _animationController.forward();
+    
+    // Fetch data from Firebase when user logs in
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authProvider = context.read<AuthProvider>();
+      final moodProvider = context.read<MoodProvider>();
+      
+      if (authProvider.user != null) {
+        appLogger.i('Fetching mood entries for user: ${authProvider.user!.uid}');
+        await moodProvider.fetchMoodEntries(authProvider.user!.uid);
+        appLogger.i('Initial mood entries fetch complete');
+      }
+    });
   }
 
   @override

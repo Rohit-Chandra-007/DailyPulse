@@ -4,8 +4,8 @@ class AppConstants {
   static const String appName = 'DailyPulse';
   static const String hiveBoxName = 'mood_box';
   
-  static const List<String> moodEmojis = ['😢', '😕', '😐', '🙂', '😄', '😡'];
-  static const List<String> moodLabels = ['Terrible', 'Bad', 'Okay', 'Good', 'Great', 'Angry'];
+  static const List<String> moodEmojis = ['😡', '😢', '😟', '😐', '😊', '😄'];
+  static const List<String> moodLabels = ['Frustrated', 'Terrible', 'Anxious', 'Neutral', 'Happy', 'Excited'];
   
   static const List<Color> moodColors = [
     Color(0xFFFFB3BA),
