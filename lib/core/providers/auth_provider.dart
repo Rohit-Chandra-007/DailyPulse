@@ -8,7 +8,7 @@ import '../utils/app_logger.dart';
 enum AuthStatus { initial, authenticated, unauthenticated, loading }
 
 class AuthProvider extends ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth;
   late final StreamSubscription<User?> _authSubscription;
   User? _user;
   AuthStatus _status = AuthStatus.initial;
@@ -23,7 +23,7 @@ class AuthProvider extends ChangeNotifier {
 
   bool get isAuthenticated => _status == AuthStatus.authenticated;
 
-  AuthProvider() {
+  AuthProvider({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance {
     _authSubscription = _auth.authStateChanges().listen(
       _onAuthStateChanged,
       onError: (Object error, StackTrace stackTrace) {
@@ -35,6 +35,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void _onAuthStateChanged(User? user) {
+    if (_isDisposed) return;
+
     if (user == null) {
       _user = null;
       _status = AuthStatus.unauthenticated;

@@ -1,4 +1,4 @@
-package com.example.dailypulse
+package com.scanflowstudio.dailypulse
 
 import io.flutter.embedding.android.FlutterActivity
 
