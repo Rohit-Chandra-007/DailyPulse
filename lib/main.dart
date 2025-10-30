@@ -3,22 +3,19 @@ import 'package:dailypulse/core/providers/auth_provider.dart';
 import 'package:dailypulse/core/providers/insights_provider.dart';
 import 'package:dailypulse/core/providers/mood_provider.dart';
 import 'package:dailypulse/core/providers/theme_provider.dart';
-
-import 'package:flutter/material.dart';
+import 'package:dailypulse/features/splash/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'data/local/hive_service.dart';
-import 'data/repo/mood_repository.dart';
-import 'features/auth/widgets/auth_wrapper.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await HiveService.init();
-
-  final moodRepo = MoodRepository();
-  moodRepo.startBackgroundSync();
 
   runApp(const MyApp());
 }
@@ -42,7 +39,7 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: theme.themeMode,
-            home: const AuthWrapper(),
+            home: const SplashScreen(),
           );
         },
       ),

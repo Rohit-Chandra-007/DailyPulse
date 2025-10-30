@@ -41,22 +41,25 @@ class _AppScaffoldState extends State<AppScaffold>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _animationController.forward();
-    
+
     // Fetch data from Firebase when user logs in
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final authProvider = context.read<AuthProvider>();
       final moodProvider = context.read<MoodProvider>();
-      
+
       if (authProvider.user != null) {
-        appLogger.i('Fetching mood entries for user: ${authProvider.user!.uid}');
-        await moodProvider.fetchMoodEntries(authProvider.user!.uid);
+        final userId = authProvider.user!.uid;
+        appLogger.i('Fetching mood entries for user: $userId');
+        await moodProvider.fetchMoodEntries(userId);
         appLogger.i('Initial mood entries fetch complete');
+        moodProvider.startBackgroundSync();
       }
     });
   }
 
   @override
   void dispose() {
+    context.read<MoodProvider>().stopBackgroundSync();
     _animationController.dispose();
     super.dispose();
   }

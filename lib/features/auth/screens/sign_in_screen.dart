@@ -72,6 +72,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                  
                     Icon(
                       Icons.favorite,
                       size: 80,

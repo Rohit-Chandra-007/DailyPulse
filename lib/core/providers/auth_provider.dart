@@ -1,33 +1,58 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+
 import '../utils/app_logger.dart';
 
 enum AuthStatus { initial, authenticated, unauthenticated, loading }
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final StreamSubscription<User?> _authSubscription;
   User? _user;
   AuthStatus _status = AuthStatus.initial;
   String? _errorMessage;
+  bool _isDisposed = false;
 
   User? get user => _user;
+
   AuthStatus get status => _status;
+
   String? get errorMessage => _errorMessage;
+
   bool get isAuthenticated => _status == AuthStatus.authenticated;
 
   AuthProvider() {
-    _auth.authStateChanges().listen(_onAuthStateChanged);
+    _authSubscription = _auth.authStateChanges().listen(
+      _onAuthStateChanged,
+      onError: (Object error, StackTrace stackTrace) {
+        _errorMessage = 'Failed to listen for auth changes';
+        appLogger.e('Auth stream error', error: error, stackTrace: stackTrace);
+        _safeNotifyListeners();
+      },
+    );
   }
 
   void _onAuthStateChanged(User? user) {
+    if (user == null) {
+      _user = null;
+      _status = AuthStatus.unauthenticated;
+      _safeNotifyListeners();
+      return;
+    }
     _user = user;
-    _status = user != null
-        ? AuthStatus.authenticated
-        : AuthStatus.unauthenticated;
-    appLogger.i(
-      'Auth state changed: ${_status.name}, User: ${user?.email ?? "none"}',
-    );
-    notifyListeners();
+    _status = AuthStatus.authenticated;
+
+    appLogger.i('Auth state changed: ${_status.name}, User: ${user.email}');
+    _safeNotifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _authSubscription.cancel();
+    super.dispose();
   }
 
   Future<bool> signUp({
@@ -38,7 +63,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       _status = AuthStatus.loading;
       _errorMessage = null;
-      notifyListeners();
+      _safeNotifyListeners();
 
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -55,7 +80,7 @@ class AuthProvider extends ChangeNotifier {
       _status = AuthStatus.unauthenticated;
       _errorMessage = _getErrorMessage(e.code);
       appLogger.w('Sign up failed: ${e.code}');
-      notifyListeners();
+      _safeNotifyListeners();
       return false;
     } catch (e, stackTrace) {
       _status = AuthStatus.unauthenticated;
@@ -65,7 +90,7 @@ class AuthProvider extends ChangeNotifier {
         error: e,
         stackTrace: stackTrace,
       );
-      notifyListeners();
+      _safeNotifyListeners();
       return false;
     }
   }
@@ -74,7 +99,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       _status = AuthStatus.loading;
       _errorMessage = null;
-      notifyListeners();
+      _safeNotifyListeners();
 
       await _auth.signInWithEmailAndPassword(email: email, password: password);
 
@@ -84,7 +109,7 @@ class AuthProvider extends ChangeNotifier {
       _status = AuthStatus.unauthenticated;
       _errorMessage = _getErrorMessage(e.code);
       appLogger.w('Sign in failed: ${e.code}');
-      notifyListeners();
+      _safeNotifyListeners();
       return false;
     } catch (e, stackTrace) {
       _status = AuthStatus.unauthenticated;
@@ -94,7 +119,7 @@ class AuthProvider extends ChangeNotifier {
         error: e,
         stackTrace: stackTrace,
       );
-      notifyListeners();
+      _safeNotifyListeners();
       return false;
     }
   }
@@ -106,7 +131,7 @@ class AuthProvider extends ChangeNotifier {
 
   void clearError() {
     _errorMessage = null;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   Future<void> handleSignIn({
@@ -152,5 +177,12 @@ class AuthProvider extends ChangeNotifier {
       default:
         return 'Authentication failed. Please try again';
     }
+  }
+
+  void _safeNotifyListeners() {
+    if (_isDisposed) {
+      return;
+    }
+    super.notifyListeners();
   }
 }

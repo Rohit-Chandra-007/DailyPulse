@@ -73,4 +73,10 @@ class MoodProvider extends ChangeNotifier {
   int getPendingSyncCount() {
     return _repository.getPendingSyncCount();
   }
+
+  @override
+  void dispose() {
+    _repository.stopBackgroundSync();
+    super.dispose();
+  }
 }
