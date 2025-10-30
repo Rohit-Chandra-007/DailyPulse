@@ -37,17 +37,19 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
 
 flutter_native_splash:
   color: "#FFFFFF"
   color_dark: "#FFFFFF"
-  image: assets/splash_logo.png
+  image: assets/app_logo.png
   android_gravity: center
   ios_content_mode: scaleAspectFit
   android_12:
     color: "#FFFFFF"
     color_dark: "#FFFFFF"
-    image: assets/splash_logo_android12.png
+    image: assets/app_logo.png
   web: false
 
 flutter_launcher_icons:
